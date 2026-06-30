@@ -1,14 +1,16 @@
 <script setup lang="ts">
+  import { storeToRefs } from 'pinia'
   import { computed, ref } from 'vue'
   import { useRouter } from 'vue-router'
 
   definePageMeta({ layout: 'auth' })
 
   const router = useRouter()
+  const authStore = useAuthStore()
+  const { isLoading } = storeToRefs(authStore)
 
   const email = ref('')
   const password = ref('')
-  const loading = ref(false)
   const errorMessage = ref('')
 
   const canSubmit = computed(() => email.value.trim() !== '' && password.value.trim() !== '')
@@ -21,12 +23,13 @@
       return
     }
 
-    loading.value = true
-
     try {
+      await authStore.login(email.value, password.value)
       await router.push('/')
+    } catch (error) {
+      errorMessage.value = (error as { message?: string })?.message ?? 'Unable to sign in.'
     } finally {
-      loading.value = false
+      password.value = ''
     }
   }
 </script>
@@ -48,6 +51,7 @@
         type="email"
         label="Email"
         placeholder="you@example.com"
+        :error="authStore.getFieldError('email') ?? undefined"
         required
       />
 
@@ -56,10 +60,11 @@
         type="password"
         label="Password"
         placeholder="Enter your password"
+        :error="authStore.getFieldError('password') ?? undefined"
         required
       />
 
-      <BaseButton type="submit" :loading="loading" :disabled="!canSubmit || loading" block>
+      <BaseButton type="submit" :loading="isLoading" :disabled="!canSubmit || isLoading" block>
         Sign in
       </BaseButton>
     </form>
