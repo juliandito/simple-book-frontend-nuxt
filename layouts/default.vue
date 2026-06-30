@@ -3,68 +3,62 @@
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-base-100">
-    <!-- Navbar -->
-    <header class="navbar bg-base-200 shadow-sm px-4">
-      <div class="navbar-start">
-        <NuxtLink to="/" class="btn btn-ghost text-xl font-bold">
-          {{ APP_NAME }}
-        </NuxtLink>
+  <div class="min-h-screen bg-base-100">
+    <div class="drawer lg:drawer-open min-h-screen">
+      <input id="app-sidebar" type="checkbox" class="drawer-toggle" />
+
+      <div class="drawer-content flex flex-col">
+        <header class="navbar bg-base-200 border-b border-base-300 px-4">
+          <div class="navbar-start">
+            <label for="app-sidebar" class="btn btn-ghost btn-sm lg:hidden" aria-label="Open sidebar">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </label>
+            <NuxtLink to="/" class="btn btn-ghost text-lg sm:text-xl font-bold">
+              {{ APP_NAME }}
+            </NuxtLink>
+          </div>
+        </header>
+
+        <main class="flex-1 container mx-auto px-4 py-8 max-w-7xl">
+          <slot />
+        </main>
+
+        <footer class="footer footer-center p-4 bg-base-200 text-base-content text-sm border-t border-base-300">
+          <p>© {{ new Date().getFullYear() }} {{ APP_NAME }}</p>
+        </footer>
       </div>
 
-      <div class="navbar-center hidden lg:flex">
-        <nav class="flex gap-2">
-          <NuxtLink
-            v-for="link in NAV_LINKS"
-            :key="link.to"
-            :to="link.to"
-            class="btn btn-ghost btn-sm"
-            active-class="btn-active"
-          >
-            {{ link.label }}
+      <div class="drawer-side z-20">
+        <label for="app-sidebar" class="drawer-overlay" aria-label="Close sidebar"></label>
+        <aside class="min-h-full w-72 bg-base-200 border-r border-base-300 px-4 py-6">
+          <NuxtLink to="/" class="text-xl font-bold block px-2 mb-6">
+            {{ APP_NAME }}
           </NuxtLink>
-        </nav>
+
+          <nav>
+            <ul class="menu w-full gap-1">
+              <li v-for="link in NAV_LINKS" :key="link.to">
+                <NuxtLink :to="link.to" active-class="active">
+                  {{ link.label }}
+                </NuxtLink>
+              </li>
+            </ul>
+          </nav>
+        </aside>
       </div>
-
-      <!-- Mobile menu -->
-      <div class="navbar-end lg:hidden">
-        <div class="dropdown dropdown-end">
-          <label tabindex="0" class="btn btn-ghost btn-sm">
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </label>
-          <ul
-            tabindex="0"
-            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li v-for="link in NAV_LINKS" :key="link.to">
-              <NuxtLink :to="link.to">{{ link.label }}</NuxtLink>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main content -->
-    <main class="flex-1 container mx-auto px-4 py-8 max-w-7xl">
-      <slot />
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer footer-center p-4 bg-base-200 text-base-content text-sm">
-      <p>© {{ new Date().getFullYear() }} {{ APP_NAME }}</p>
-    </footer>
+    </div>
   </div>
 </template>
