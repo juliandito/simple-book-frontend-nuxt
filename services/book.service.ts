@@ -20,7 +20,7 @@ export const bookService = {
       limit: query?.limit ?? 10,
       ...(query?.search ? { search: query.search } : {}),
     }
-    return api<PaginatedResponse<Book>>(ENDPOINT, { params })
+    return api.get<PaginatedResponse<Book>>(ENDPOINT, params)
   },
 
   /**
@@ -28,7 +28,7 @@ export const bookService = {
    */
   async getBook(id: string): Promise<ApiResponse<Book>> {
     const api = useApiClient()
-    return api<ApiResponse<Book>>(`${ENDPOINT}/${id}`)
+    return api.get<ApiResponse<Book>>(`${ENDPOINT}/${id}`)
   },
 
   /**
@@ -36,10 +36,7 @@ export const bookService = {
    */
   async createBook(payload: CreateBookRequest): Promise<ApiResponse<Book>> {
     const api = useApiClient()
-    return api<ApiResponse<Book>>(ENDPOINT, {
-      method: 'POST',
-      body: payload,
-    })
+    return api.post<ApiResponse<Book>>(ENDPOINT, payload)
   },
 
   /**
@@ -47,10 +44,7 @@ export const bookService = {
    */
   async updateBook(id: string, payload: UpdateBookRequest): Promise<ApiResponse<Book>> {
     const api = useApiClient()
-    return api<ApiResponse<Book>>(`${ENDPOINT}/${id}`, {
-      method: 'PUT',
-      body: payload,
-    })
+    return api.put<ApiResponse<Book>>(`${ENDPOINT}/${id}`, payload)
   },
 
   /**
@@ -58,8 +52,6 @@ export const bookService = {
    */
   async deleteBook(id: string): Promise<ApiResponse<null>> {
     const api = useApiClient()
-    return api<ApiResponse<null>>(`${ENDPOINT}/${id}`, {
-      method: 'DELETE',
-    })
+    return api.delete<ApiResponse<null>>(`${ENDPOINT}/${id}`)
   },
 }

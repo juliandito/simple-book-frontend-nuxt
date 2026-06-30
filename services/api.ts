@@ -1,5 +1,18 @@
 import type { ApiError } from '~/types/api'
 
+type QueryParams = Record<string, any>
+
+type RequestBody = BodyInit | Record<string, any> | null | undefined
+
+type ApiClient = {
+  request<T>(url: string, options?: Parameters<ReturnType<typeof $fetch.create>>[1]): Promise<T>
+  get<T>(url: string, params?: QueryParams): Promise<T>
+  post<T>(url: string, body?: RequestBody, params?: QueryParams): Promise<T>
+  put<T>(url: string, body?: RequestBody, params?: QueryParams): Promise<T>
+  patch<T>(url: string, body?: RequestBody, params?: QueryParams): Promise<T>
+  delete<T>(url: string, params?: QueryParams): Promise<T>
+}
+
 /**
  * Creates a typed, reusable $fetch instance pre-configured with:
  * - Base URL from runtime config
@@ -11,7 +24,7 @@ export function createApiClient() {
   const config = useRuntimeConfig()
   const baseURL = config.public.apiBaseUrl as string
 
-  return $fetch.create({
+  const client = $fetch.create({
     baseURL,
     headers: {
       'Content-Type': 'application/json',
@@ -43,6 +56,27 @@ export function createApiClient() {
       throw error
     },
   })
+
+  return {
+    request<T>(url: string, options?: Parameters<typeof client>[1]) {
+      return client<T>(url, options)
+    },
+    get<T>(url: string, params?: QueryParams) {
+      return client<T>(url, { params })
+    },
+    post<T>(url: string, body?: RequestBody, params?: QueryParams) {
+      return client<T>(url, { method: 'POST', body: body as RequestBody, params })
+    },
+    put<T>(url: string, body?: RequestBody, params?: QueryParams) {
+      return client<T>(url, { method: 'PUT', body: body as RequestBody, params })
+    },
+    patch<T>(url: string, body?: RequestBody, params?: QueryParams) {
+      return client<T>(url, { method: 'PATCH', body: body as RequestBody, params })
+    },
+    delete<T>(url: string, params?: QueryParams) {
+      return client<T>(url, { method: 'DELETE', params })
+    },
+  } satisfies ApiClient
 }
 
 /**
