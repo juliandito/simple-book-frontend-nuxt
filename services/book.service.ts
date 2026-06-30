@@ -15,7 +15,7 @@ export const bookService = {
    */
   async getBooks(query?: PaginationQuery): Promise<PaginatedResponse<Book>> {
     const api = useApiClient()
-    const params: Record<string, unknown> = {
+    const params: Record<string, any> = {
       page: query?.page ?? 1,
       limit: query?.limit ?? 10,
       ...(query?.search ? { search: query.search } : {}),
