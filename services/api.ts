@@ -21,10 +21,7 @@ export function createApiClient() {
       // Future: inject auth token
       // const authStore = useAuthStore()
       // if (authStore.token) {
-      //   options.headers = {
-      //     ...options.headers,
-      //     Authorization: `******
-      //   }
+      //   options.headers = { ...options.headers, Authorization: 'Bearer ' + authStore.token }
       // }
       options.headers = options.headers ?? {}
     },
